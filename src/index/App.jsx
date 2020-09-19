@@ -15,8 +15,10 @@ import {
     exchangeFromTo,
     hideCitySelector,
     fetchCityData,
-    setSelectedCity
+    setSelectedCity,
+    showDateSelector, hideDateSelector
 } from './actions';
+import DateSelector from "../common/DateSelector";
 
 function App(props) {
     const {
@@ -25,7 +27,9 @@ function App(props) {
         dispatch,
         isCitySelectorVisible,
         cityData,
-        isLoadingCityData
+        isLoadingCityData,
+        departDate,
+        isDateSelectorVisible
     } = props;
     const onBack = useCallback(() => {
       window.history.back();
@@ -46,6 +50,18 @@ function App(props) {
        }, dispatch);
     }, []);
 
+    const departDateCbs = useMemo(() => {
+        return bindActionCreators({
+            onClick: showDateSelector
+        }, dispatch);
+    }, []);
+
+    const dateSelectorCbs = useMemo(() => {
+        return bindActionCreators({
+            onBack: hideDateSelector
+        }, dispatch);
+    }, []);
+
     return (
         <div>
             <div className="header-wrapper">
@@ -56,7 +72,10 @@ function App(props) {
                     from={from}
                     to={to}
                     {...cbs}/>
-                <DepartDate />
+                <DepartDate
+                    time={departDate}
+                    {...departDateCbs}
+                />
                 <HighSpeed />
                 <Submit />
             </form>
@@ -66,6 +85,7 @@ function App(props) {
                 isLoading={isLoadingCityData}
                 {...citySelectorCbs}
             />
+            <DateSelector show={isDateSelectorVisible} {...dateSelectorCbs} />
         </div>
     );
 
